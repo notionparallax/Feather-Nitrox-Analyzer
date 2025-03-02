@@ -17,7 +17,6 @@ button1_pin.direction = digitalio.Direction.INPUT
 button1_pin.pull = digitalio.Pull.UP
 button1 = Debouncer(button1_pin)
 
-
 button2_pin = digitalio.DigitalInOut(board.D1)
 button2_pin.direction = digitalio.Direction.INPUT
 button2_pin.pull = digitalio.Pull.DOWN
@@ -53,6 +52,10 @@ def draw_screen(
     foreground_colour=0xAA0088,  # Purple
     text_colour=0xFFFF00,
 ):
+
+    if len(buttons) != 3:
+        raise ValueError("The 'buttons' list must contain exactly 3 elements.")
+
     # Clear the main group
     while len(main_group) > 0:
         main_group.pop()
@@ -130,9 +133,9 @@ def draw_analyse_screen():
             "FAKE!!!!",
         ],
         buttons=[
-            "Calibrate",
-            "History",
-            "Sleep",
+            "Cali",
+            "Hist",
+            "Zzzz",
         ],
     )
 
@@ -140,7 +143,9 @@ def draw_analyse_screen():
 def draw_calibrate_screen():
     draw_screen(
         texts=["CALIBRATING", "Please wait"],
+        buttons=["", "", ""],
     )
+
     time.sleep(2)
 
 
@@ -237,6 +242,7 @@ def handle_buttons():
     button2.update()
     button3.update()
 
+    # TODO: add support for long press and chording
     if button1.fell:
         print("Button 1 pressed")
         state_machine.on_event("button1_pressed")
