@@ -39,9 +39,12 @@ last_state = None
 
 o2_pc = 101  # impossible number to start with
 
+# Create a display group for double buffering
+main_group = displayio.Group()
+display.root_group = main_group
+
 
 def draw_screen(
-    display=display,
     texts=["Please Hammer,", "Don't hurt em!", "Stop! Hammertime!"],
     buttons=["A", "B", "C"],
     border=20,
@@ -50,9 +53,13 @@ def draw_screen(
     foreground_colour=0xAA0088,  # Purple
     text_colour=0xFFFF00,
 ):
+    # Clear the main group
+    while len(main_group) > 0:
+        main_group.pop()
+
     # Make the display context
     splash = displayio.Group()
-    display.root_group = splash
+    main_group.append(splash)
     parts = []
 
     color_bitmap = displayio.Bitmap(display.width, display.height, 1)
