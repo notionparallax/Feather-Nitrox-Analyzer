@@ -144,18 +144,37 @@ def draw_calibrate_screen():
     time.sleep(2)
 
 
-def draw_history_screen():
+def generate_history_entries(num_entries=10):
+    history_entries = []
+
+    for i in range(num_entries):
+        o2_percentage = random.uniform(21, 100)
+        mod_1_6 = calculate_mod(o2_percentage, pp_o2_max=1.6)
+        history_entries.append(
+            {
+                "entry_num": num_entries - i,  # Numbering the entries
+                "o2_percentage": round(o2_percentage, 1),
+                "mod_1_6": mod_1_6,
+            }
+        )
+
+    return history_entries
+
+
+def draw_history_screen(start_at=0, num_entries=5):
+    history_entries = generate_history_entries()
+    texts = ["Num  O2%  MOD"]
+    for entry in history_entries[start_at : start_at + num_entries]:
+        texts.append(
+            f"{entry['entry_num']:>3}  {entry['o2_percentage']}%  {entry['mod_1_6']:>2}m"
+        )
+
     draw_screen(
-        texts=[
-            "O2%  Time      MOD",
-            "21%  10:00:25  56m",
-            "20%  09:45:01  54m",
-            "19%  09:30:45  53m",
-        ],
+        texts=texts,
         buttons=[
-            "up",
+            "up" if start_at > 0 else "",
             "bk",
-            "dn",
+            "dn" if start_at + num_entries < len(history_entries) else "",
         ],
     )
 
@@ -163,6 +182,7 @@ def draw_history_screen():
 class StateMachine:
     def __init__(self):
         self.state = SLEEP
+        self.current_history_index = 0
 
     def on_event(self, event):
         if self.state == SLEEP:
@@ -196,10 +216,17 @@ class StateMachine:
                 print("Changing state to ANALYSE")
 
     def scroll_up(self):
-        print("Scrolling up in history")
+        if self.current_history_index > 0:
+            self.current_history_index -= 1
+            draw_history_screen(self.current_history_index)
+            print("Scrolling up in history")
 
     def scroll_down(self):
-        print("Scrolling down in history")
+        history_entries = generate_history_entries()
+        if self.current_history_index + 5 < len(history_entries):
+            self.current_history_index += 1
+            draw_history_screen(self.current_history_index)
+            print("Scrolling down in history")
 
 
 state_machine = StateMachine()
@@ -232,6 +259,6 @@ while True:
         elif state_machine.state == CALIBRATE:
             draw_calibrate_screen()
         elif state_machine.state == HISTORY:
-            draw_history_screen()
+            draw_history_screen(state_machine.current_history_index)
         last_state = state_machine.state
     time.sleep(0.1)
