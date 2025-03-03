@@ -5,9 +5,11 @@ import board
 import digitalio
 import displayio
 import terminalio
-import storage
 from adafruit_display_text import label
 from adafruit_debouncer import Debouncer
+import adafruit_max1704x
+
+# import storage
 
 display = board.DISPLAY
 
@@ -26,6 +28,8 @@ button3_pin = digitalio.DigitalInOut(board.D2)
 button3_pin.direction = digitalio.Direction.INPUT
 button3_pin.pull = digitalio.Pull.DOWN
 button3 = Debouncer(button3_pin)
+
+monitor = adafruit_max1704x.MAX17048(board.I2C())
 
 # Define states
 SLEEP = 0
@@ -125,12 +129,10 @@ def draw_analyse_screen():
 
     draw_screen(
         texts=[
-            f"O2: {o2_pc:.1f}%",
+            f"O2: {o2_pc:.1f}% (f{random.random()*5:.2f}Vf)",
             f"MOD 1.4: {calculate_mod(o2_pc, pp_o2_max=1.4)}m",
             f"MOD 1.6: {calculate_mod(o2_pc, pp_o2_max=1.6)}m",
-            f"Battery: {3+random.random():.1f}V",
-            f"Sensor: {random.random()*5:.2f}V",
-            "FAKE!!!!",
+            f"Bat: {monitor.cell_percent:.0f}% ({monitor.cell_voltage:.2f}V)",
         ],
         buttons=[
             "Cali",

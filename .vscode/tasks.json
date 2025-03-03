@@ -10,6 +10,16 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "Deploy everything to Microcontroller",
+      "type": "shell",
+      "command": "powershell -Command \"Copy-Item -Path code.py, lib, settings.toml -Destination D: -Recurse -Force\"",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }
