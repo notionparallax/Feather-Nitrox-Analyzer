@@ -1,4 +1,5 @@
 import random
+import alarm
 import time
 import math
 import board
@@ -12,22 +13,6 @@ import adafruit_max1704x
 # import storage
 
 display = board.DISPLAY
-
-# Define button pins
-button1_pin = digitalio.DigitalInOut(board.BUTTON)
-button1_pin.direction = digitalio.Direction.INPUT
-button1_pin.pull = digitalio.Pull.UP
-button1 = Debouncer(button1_pin)
-
-button2_pin = digitalio.DigitalInOut(board.D1)
-button2_pin.direction = digitalio.Direction.INPUT
-button2_pin.pull = digitalio.Pull.DOWN
-button2 = Debouncer(button2_pin)
-
-button3_pin = digitalio.DigitalInOut(board.D2)
-button3_pin.direction = digitalio.Direction.INPUT
-button3_pin.pull = digitalio.Pull.DOWN
-button3 = Debouncer(button3_pin)
 
 monitor = adafruit_max1704x.MAX17048(board.I2C())
 
@@ -45,6 +30,32 @@ o2_pc = 101  # impossible number to start with
 # Create a display group for double buffering
 main_group = displayio.Group()
 display.root_group = main_group
+
+# Global variable to track if the device has just woken up
+just_woke_up = True
+
+
+def init_buttons():
+    global button1_pin, button2_pin, button3_pin, button1, button2, button3
+
+    button1_pin = digitalio.DigitalInOut(board.BUTTON)
+    button1_pin.direction = digitalio.Direction.INPUT
+    button1_pin.pull = digitalio.Pull.UP
+    button1 = Debouncer(button1_pin)
+
+    button2_pin = digitalio.DigitalInOut(board.D1)
+    button2_pin.direction = digitalio.Direction.INPUT
+    button2_pin.pull = digitalio.Pull.DOWN
+    button2 = Debouncer(button2_pin)
+
+    button3_pin = digitalio.DigitalInOut(board.D2)
+    button3_pin.direction = digitalio.Direction.INPUT
+    button3_pin.pull = digitalio.Pull.DOWN
+    button3 = Debouncer(button3_pin)
+
+
+# Initialize the button pins
+init_buttons()
 
 
 def draw_screen(
@@ -105,11 +116,38 @@ def draw_screen(
         splash.append(p)
 
 
+def deinit_buttons():
+    button1_pin.deinit()
+    button2_pin.deinit()
+    button3_pin.deinit()
+
+
+def enter_deep_sleep():
+    global just_woke_up
+    # Deinitialize the button pins to release them
+    deinit_buttons()
+
+    # Configure the wake-up pins to wake up the board from deep sleep
+    wake_pin1 = alarm.pin.PinAlarm(pin=board.BUTTON, value=False, pull=True)
+    wake_pin2 = alarm.pin.PinAlarm(pin=board.D1, value=False, pull=True)
+    wake_pin3 = alarm.pin.PinAlarm(pin=board.D2, value=False, pull=True)
+
+    # Set the just_woke_up flag
+    just_woke_up = True
+
+    # Enter deep sleep mode
+    alarm.exit_and_deep_sleep_until_alarms(wake_pin1, wake_pin2, wake_pin3)
+
+    init_buttons()
+
+
 def draw_sleep_screen():
-    draw_screen(
-        texts=["SLEEPING", "zzzzzzzzzz"],
-        buttons=["wake", ".", "."],
-    )
+    # draw_screen(
+    #     texts=["SLEEPING", "zzzzzzzzzz"],
+    #     buttons=["wake", ".", "."],
+    # )
+    # Enter deep sleep mode after drawing the sleep screen
+    enter_deep_sleep()
 
 
 def calculate_mod(o2_percentage, pp_o2_max=1.6, give_int=True):
@@ -258,6 +296,9 @@ def handle_buttons():
 
 while True:
     handle_buttons()
+    if just_woke_up:
+        state_machine.state = ANALYSE
+        just_woke_up = False
     if state_machine.state != last_state:
         print(f"State changed to {state_machine.state}")
         if state_machine.state == SLEEP:
