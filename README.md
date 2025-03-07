@@ -66,8 +66,35 @@ flowchart TD
 
 [ ] Add in calibration modes
 
-## Things it's missing, hardware wise
+## Things it's missing, electronic hardware wise
 
 - It doesn't have a Real Time Clock (RTC) so the history can't have a time stamp.
 - It would make the UI a lot easier to design if it had a rotary encoder to scroll between options.
 - Big stretch: it'd be good to put a Carbon Monoxide (CO) monitor in there too, but that'd bump up the size a fair bit.
+
+# Enclosure
+
+I knocked up a little case in Rhino by hacking up the [Adafruit IOT battery monitor](https://learn.adafruit.com/iot-battery-monitor) case, by [Ruiz Brothers]().
+
+![](docs/first_case.png)
+
+But, as I'm a total masochist, and I wanted to learn fusion, I've remade it in there, and now it looks something like this:
+
+![](docs/fusion_drawing.png)
+
+I made a bit of a mistake and put the top two sections on 180 degrees around the wrong way, but the enclosure is symmetrical so I can just assemble it the other way around.
+
+I'll print that soon and seen how it goes. It's a bit of a mystery how the battery and the wiring will fit, but it's more that I have too much space rather than not enough. I might even be able to make it a few mm shorter. (Maybe even as much as 5 ish!)
+
+## Enclosure questions
+
+- do the buttons work? I'm planning to superglue a little rhinestone to each one to give it some travel, but is that enough?
+- Should I put the usb connection poking out of the casing, and make the port much smaller
+- leading on from that, how much smaller can I make the case overall? It could easily be 3 or 4 mm shorter in length.
+- is it big enough? Perversely, is there enough to grip onto on a rocky boat?
+- can it be waterproofed?
+
+# Next steps
+
+1. print the new enclosure
+2. connect and calibrate the sensor
