@@ -310,4 +310,4 @@ while True:
         elif state_machine.state == HISTORY:
             draw_history_screen(state_machine.current_history_index)
         last_state = state_machine.state
-    time.sleep(0.1)
+    time.sleep(0.05)
