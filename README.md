@@ -19,6 +19,15 @@ You need to know the percentage of oxygen in your mix so that you don't go too d
 3. You can add as many features are you like
 4. Making things is a way to understand why things are the way they are
 
+# Parts
+
+| Part                                                                                                                                                                                                                  | Picture                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [Reverse TFT Feather](https://www.adafruit.com/product/5345) I've got the S2, [TBH, the S3 would probably be better](https://openelab.io/blogs/learn/ultimate-guide-to-the-differences-between-esp32-s2-and-esp32-s3) | ![](https://cdn-shop.adafruit.com/970x728/5345-01.jpg) |
+| O₂ sensor [I have a narked at 90 one](https://www.narkedat90.com/nanm01-molex.html), but I am pretty sure there's a sub $50 one on Ali Express that'll do just as well.                                               | ![](docs/nanm01.png)                                   |
+| Molex connector                                                                                                                                                                                                       | No picture just yet                                    |
+| Totally rad enclosure                                                                                                                                                                                                 | Incoming!                                              |
+
 ## What's a Feather and why not do what everyone else has done already?
 
 Most previous projects, e.g. [this](https://github.com/notionparallax/DIY-Nitrox-Analyzer-04_12_2019) have used an Arduino microcontroller. They're cheap, there's loads of example projects, and they've been around for a while.
